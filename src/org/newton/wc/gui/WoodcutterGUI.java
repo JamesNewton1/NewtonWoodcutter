@@ -184,19 +184,19 @@ public class WoodcutterGUI {
 			selectedTrees.add(Trees.NORMAL);
 		}
 		if(willowTreeRadioBtn.isSelected()) {
-			selectedTrees.add(Trees.NORMAL);
+			selectedTrees.add(Trees.WILLOW);
 		}
 		if(oakTreeRadioBtn.isSelected()) {
-			selectedTrees.add(Trees.NORMAL);
+			selectedTrees.add(Trees.OAK);
 		}
 		if(mapleTreeRadioBtn.isSelected()) {
-			selectedTrees.add(Trees.NORMAL);
+			selectedTrees.add(Trees.MAPLE);
 		}
 		if(yewTreeRadioBtn.isSelected()) {
-			selectedTrees.add(Trees.NORMAL);
+			selectedTrees.add(Trees.YEW);
 		}
 		if(magicTreeRadioBtn.isSelected()) {
-			selectedTrees.add(Trees.NORMAL);
+			selectedTrees.add(Trees.MAGIC);
 		}
 		
 		return selectedTrees.toArray(new Trees[selectedTrees.size()]);
