@@ -3,7 +3,11 @@ package org.newton.wc.osbot;
 import org.newton.api.util.RandomUtil;
 import org.newton.wc.Woodcutter;
 import org.newton.wc.WoodcutterSettings;
+import org.newton.wc.data.Tree;
+import org.osbot.rs07.api.map.Area;
+import org.osbot.rs07.api.map.Position;
 import org.osbot.rs07.api.model.RS2Object;
+import org.osbot.rs07.api.ui.Skill;
 import org.osbot.rs07.script.MethodProvider;
 
 public class OSBotWoodcutter extends Woodcutter {
@@ -24,11 +28,13 @@ public class OSBotWoodcutter extends Woodcutter {
 
 	@Override
 	protected int cutTree() {
-		RS2Object closestAvailableTree = OSBotUtil.getClosestAvailableTree(methodProvider.getObjects(), settings.getTreesToCut(), settings.getCuttingArea());
+		RS2Object closestAvailableTree = OSBotUtil.getClosestAvailableTree(methodProvider.getSkills().getStatic(Skill.WOODCUTTING), methodProvider.getObjects(), settings.getTreesToCut(), settings.getCuttingArea(), settings.prioritiseBestTree());
 		
-		closestAvailableTree.interact("Chop down");
+		if(closestAvailableTree != null && closestAvailableTree.interact("Chop down")) {
+			return RandomUtil.randomGaussian(200, 20000, 1500, 250);
+		}
 		
-		return RandomUtil.randomGaussian(200, 20000, 800, 200);
+		return RandomUtil.randomGaussian(150, 20000, 500, 300);
 	}
 
 	@Override
@@ -40,7 +46,8 @@ public class OSBotWoodcutter extends Woodcutter {
 
 	@Override
 	protected int findTree() {
-		methodProvider.getWalking().webWalk(OSBotUtil.convertTileToPosition(settings.getCuttingArea().getCenter()));
+		Position centerPos = OSBotUtil.convertTileToPosition(settings.getCuttingArea().getCenter());
+		methodProvider.getWalking().webWalk(new Area(centerPos, centerPos));
 		
 		return RandomUtil.randomGaussian(200, 20000, 800, 200);
 	}
@@ -58,7 +65,8 @@ public class OSBotWoodcutter extends Woodcutter {
 
 	@Override
 	protected int travelToBank() {
-		methodProvider.getWalking().webWalk(OSBotUtil.convertTileToPosition(settings.getBankArea().getCenter()));
+		//Position centerPos = OSBotUtil.convertTileToPosition(settings.getBankArea().getCenter());
+		methodProvider.getWalking().webWalk(OSBotUtil.getBanks());
 		
 		return RandomUtil.randomGaussian(200, 20000, 800, 200);
 	}

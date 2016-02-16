@@ -4,10 +4,12 @@ import java.util.Arrays;
 
 import org.newton.api.map.TileArea;
 import org.newton.wc.WoodcutterStates;
-import org.newton.wc.data.Trees;
+import org.newton.wc.data.Tree;
 import org.osbot.rs07.api.filter.Filter;
 import org.osbot.rs07.api.model.Item;
 import org.osbot.rs07.api.model.Player;
+import org.osbot.rs07.api.model.RS2Object;
+import org.osbot.rs07.api.ui.Skill;
 import org.osbot.rs07.script.MethodProvider;
 
 public class OSBotWoodcutterStates extends WoodcutterStates {
@@ -19,8 +21,10 @@ public class OSBotWoodcutterStates extends WoodcutterStates {
 	}
 	
 	@Override
-	protected boolean isTreeAvailable(Trees[] treesToFind, TileArea treeArea) {
-		return OSBotUtil.getClosestAvailableTree(methodProvider.getObjects(), treesToFind, treeArea) != null;
+	protected boolean isTreeAvailable(Tree[] treesToFind, TileArea treeArea) {
+		RS2Object availableTree = OSBotUtil.getClosestAvailableTree(methodProvider.getSkills().getStatic(Skill.WOODCUTTING), methodProvider.getObjects(), treesToFind, treeArea, false);
+		
+		return availableTree != null;
 	}
 
 	@Override
@@ -41,7 +45,7 @@ public class OSBotWoodcutterStates extends WoodcutterStates {
 			public boolean match(Item item) {
 				if(item == null || item.getName() == null) return false;
 
-				return Arrays.asList(Trees.getLogsNames()).contains(item.getName());
+				return Arrays.asList(Tree.getLogsNames()).contains(item.getName());
 			}
 			
 		};
@@ -69,5 +73,4 @@ public class OSBotWoodcutterStates extends WoodcutterStates {
 	protected boolean isMoving() {
 		return methodProvider.myPlayer().isMoving();
 	}
-	
 }

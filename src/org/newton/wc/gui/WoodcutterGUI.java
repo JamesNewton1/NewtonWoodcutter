@@ -16,7 +16,7 @@ import javax.swing.SwingConstants;
 import javax.swing.border.TitledBorder;
 
 import org.newton.wc.data.Axes;
-import org.newton.wc.data.Trees;
+import org.newton.wc.data.Tree;
 
 import javax.swing.UIManager;
 import java.awt.Color;
@@ -24,11 +24,15 @@ import javax.swing.JComboBox;
 import javax.swing.JRadioButton;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JSpinner;
 
-public class WoodcutterGUI {
+public class WoodcutterGUI extends JFrame {
 
-	public JFrame frame;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5471151181580362084L;
 	private ArrayList<WoodcutterGUIListener> listeners;
 	private boolean started = false;
 	
@@ -38,6 +42,8 @@ public class WoodcutterGUI {
 	JRadioButton mapleTreeRadioBtn;
 	JRadioButton yewTreeRadioBtn;
 	JRadioButton magicTreeRadioBtn;
+	
+	JCheckBox prioritiseBestTree;
 
 	
 	/**
@@ -48,7 +54,7 @@ public class WoodcutterGUI {
 			public void run() {
 				try {
 					WoodcutterGUI window = new WoodcutterGUI(null, null);
-					window.frame.setVisible(true);
+					window.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -61,23 +67,24 @@ public class WoodcutterGUI {
 	 */
 	public WoodcutterGUI(WoodcutterGUIListener... submitListeners) {
 		initialize();
-		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		this.listeners = new ArrayList<WoodcutterGUIListener>();
 		this.listeners.addAll(Arrays.asList(submitListeners));
+		for(WoodcutterGUIListener listener : submitListeners) {
+			addWindowListener(listener);
+		}
 	}
 
 	/**
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		frame = new JFrame();
-		frame.setBounds(100, 100, 450, 300);
-		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		frame.getContentPane().setLayout(null);
+		setBounds(100, 100, 450, 300);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		getContentPane().setLayout(null);
 		
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		tabbedPane.setBounds(10, 44, 414, 207);
-		frame.getContentPane().add(tabbedPane);
+		getContentPane().add(tabbedPane);
 		
 		JPanel mainPanel = new JPanel();
 		mainPanel.setToolTipText("Main");
@@ -91,17 +98,21 @@ public class WoodcutterGUI {
 		panel.setLayout(null);
 		
 		JLabel choppingMethodLabel = new JLabel("Chopping method");
-		choppingMethodLabel.setBounds(10, 26, 92, 14);
+		choppingMethodLabel.setBounds(10, 26, 105, 14);
 		panel.add(choppingMethodLabel);
 		
-		JComboBox choppingMethodComboBox = new JComboBox();
-		choppingMethodComboBox.setModel(new DefaultComboBoxModel(new String[] {"Bank", "Powerchop"}));
+		JComboBox<String> choppingMethodComboBox = new JComboBox<String>();
+		choppingMethodComboBox.setModel(new DefaultComboBoxModel<String>(new String[] {"Bank", "Powerchop"}));
 		choppingMethodComboBox.setBounds(112, 23, 123, 20);
 		panel.add(choppingMethodComboBox);
 		
-		JLabel treesToCutLabel = new JLabel("Trees to cut");
-		treesToCutLabel.setBounds(10, 51, 92, 14);
-		panel.add(treesToCutLabel);
+		JLabel TreeToCutLabel = new JLabel("Tree to cut");
+		TreeToCutLabel.setBounds(10, 51, 92, 14);
+		panel.add(TreeToCutLabel);
+		
+		prioritiseBestTree = new JCheckBox("Prioritise best tree?");
+		prioritiseBestTree.setBounds(110, 51, 200, 14);
+		panel.add(prioritiseBestTree);
 		
 		normalTreeRadioBtn = new JRadioButton("Normal Tree");
 		normalTreeRadioBtn.setBounds(10, 67, 99, 23);
@@ -155,7 +166,7 @@ public class WoodcutterGUI {
 		titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		titleLabel.setFont(new Font("Arial Black", Font.BOLD, 18));
 		titleLabel.setBounds(104, 11, 228, 26);
-		frame.getContentPane().add(titleLabel);
+		getContentPane().add(titleLabel);
 		
 
 		startStopBtn.addActionListener(new ActionListener() {
@@ -166,7 +177,7 @@ public class WoodcutterGUI {
 					boolean useBank = choppingMethodComboBox.getSelectedIndex() == 0;
 
 					if(started) {
-						listener.onGUISubmit(getSelectedTrees(), (Integer) chopRadiusSpinner.getValue(), Axes.AXE_NAMES, useBank);
+						listener.onGUISubmit(getSelectedTrees(), (Integer) chopRadiusSpinner.getValue(), Axes.AXE_NAMES, useBank, prioritiseBestTree.isSelected());
 					}
 					else {
 						listener.onGUIStop();
@@ -178,32 +189,28 @@ public class WoodcutterGUI {
 	
 	
 		
-	private Trees[] getSelectedTrees() {
-		ArrayList<Trees> selectedTrees = new ArrayList<Trees>();
+	private Tree[] getSelectedTrees() {
+		ArrayList<Tree> selectedTree = new ArrayList<Tree>();
 		if(normalTreeRadioBtn.isSelected()) {
-			selectedTrees.add(Trees.NORMAL);
+			selectedTree.add(Tree.NORMAL);
 		}
 		if(willowTreeRadioBtn.isSelected()) {
-			selectedTrees.add(Trees.WILLOW);
+			selectedTree.add(Tree.WILLOW);
 		}
 		if(oakTreeRadioBtn.isSelected()) {
-			selectedTrees.add(Trees.OAK);
+			selectedTree.add(Tree.OAK);
 		}
 		if(mapleTreeRadioBtn.isSelected()) {
-			selectedTrees.add(Trees.MAPLE);
+			selectedTree.add(Tree.MAPLE);
 		}
 		if(yewTreeRadioBtn.isSelected()) {
-			selectedTrees.add(Trees.YEW);
+			selectedTree.add(Tree.YEW);
 		}
 		if(magicTreeRadioBtn.isSelected()) {
-			selectedTrees.add(Trees.MAGIC);
+			selectedTree.add(Tree.MAGIC);
 		}
 		
-		return selectedTrees.toArray(new Trees[selectedTrees.size()]);
+		return selectedTree.toArray(new Tree[selectedTree.size()]);
 	}
-		
-	private String[] getNecessaryItems() {
-		return Axes.AXE_NAMES;
-	}
-		
+				
 }

@@ -1,10 +1,12 @@
 package org.newton.wc.gui;
 
-import org.newton.wc.data.Trees;
+import java.awt.event.WindowListener;
 
-public interface WoodcutterGUIListener {
+import org.newton.wc.data.Tree;
 
-	public void onGUISubmit(Trees[] treesToCut, int cutRadius, String[] necessaryItems, boolean useBank);
+public interface WoodcutterGUIListener extends WindowListener {
+
+	public void onGUISubmit(Tree[] treesToCut, int cutRadius, String[] necessaryItems, boolean useBank, boolean prioritiseBestTree);
 	
 	public void onGUIStop();
 	

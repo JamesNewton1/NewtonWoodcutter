@@ -1,13 +1,13 @@
 package org.newton.wc;
 
 import org.newton.api.map.TileArea;
-import org.newton.wc.data.Trees;
+import org.newton.wc.data.Tree;
 
 //woodcutter:
 //cut tree -> is inventory full? -> perform inventory disposal (bank or drop) -> ...
 public abstract class WoodcutterStates {
 
-	protected abstract boolean isTreeAvailable(Trees[] treesToFind, TileArea treeArea);
+	protected abstract boolean isTreeAvailable(Tree[] treesToFind, TileArea treeArea);
 		
 	protected abstract boolean isInventoryFull();
 	
@@ -33,7 +33,7 @@ public abstract class WoodcutterStates {
 		boolean treeAvailable = isTreeAvailable(settings.getTreesToCut(), settings.getCuttingArea());
 				
 		boolean inDroppingPhase = (!useBank && currentState == State.DROP && hasLogs());
-		boolean inBankingPhase = (useBank && isBankAvailable() && inventoryContainsUnecessaryItems);
+		boolean inBankingPhase = (useBank && isBankAvailable() && inventoryContainsUnecessaryItems && isBankOpen());
 		
 		boolean shouldDisposeItems = isInventoryFull() || inDroppingPhase || inBankingPhase;
 				
